@@ -1,0 +1,10 @@
+D:\Projects\C#\0726\0726\bin\x86\Release\LT.mdb
+D:\Projects\C#\0726\0726\bin\x86\Release\0726.exe
+D:\Projects\C#\0726\0726\bin\x86\Release\0726.pdb
+D:\Projects\C#\0726\0726\obj\x86\Release\_0726.Form1.resources
+D:\Projects\C#\0726\0726\obj\x86\Release\_0726.Form2.resources
+D:\Projects\C#\0726\0726\obj\x86\Release\_0726.Properties.Resources.resources
+D:\Projects\C#\0726\0726\obj\x86\Release\_0726.QueryResultForm.resources
+D:\Projects\C#\0726\0726\obj\x86\Release\0726.csproj.GenerateResource.Cache
+D:\Projects\C#\0726\0726\obj\x86\Release\0726.exe
+D:\Projects\C#\0726\0726\obj\x86\Release\0726.pdb
