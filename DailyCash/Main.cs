@@ -10,7 +10,6 @@ using System.Data.OleDb;
 using System.Net;
 using System.IO;
 using System.IO.Compression;
-using HtmlAgilityPack;
 
 namespace DailyCash
 {
