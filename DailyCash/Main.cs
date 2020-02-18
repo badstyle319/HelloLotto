@@ -71,9 +71,9 @@ namespace DailyCash
                 Console.WriteLine(e1.Message);
             }
 
-            refreshData();
-            gotoRow(currentRow);
-            updateDate();
+            RefreshData();
+            GotoRow(currentRow);
+            UpdateDate();
         }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
@@ -83,7 +83,7 @@ namespace DailyCash
         }
 
         //更新資料庫內容到異動datagrid上
-        private void refreshData()
+        private void RefreshData()
         {
             datasetNum.Clear();
 
@@ -106,11 +106,11 @@ namespace DailyCash
         }
 
         //跳到第N筆資料方法
-        private void gotoRow(int rowNumber)
+        private void GotoRow(int rowNumber)
         {
             objDV.ClearSelection();
 
-            clearColor(objDV);
+            ClearColor(objDV);
 
             if (datasetNum.Tables["dailycash"].Rows.Count < 1)
                 return;
@@ -150,13 +150,13 @@ namespace DailyCash
         }
 
         //update the newest date for every queries
-        private void updateDate()
+        private void UpdateDate()
         {
             qDateTextBox2.Text = newestDate;
         }
 
         //清除cellcolor
-        private void clearColor(DataGridView dgv)
+        private void ClearColor(DataGridView dgv)
         {
             for (int i = 0; i < dgv.Rows.Count; i++)
                 for (int j = 0; j < dgv.Columns.Count; j++)
@@ -164,35 +164,35 @@ namespace DailyCash
         }
 
         //第一筆按鈕
-        private void firstButton_Click(object sender, EventArgs e)
+        private void FirstButton_Click(object sender, EventArgs e)
         {
             currentRow = 0;
-            gotoRow(currentRow);
+            GotoRow(currentRow);
         }
 
         //上一筆按鈕
-        private void preButton_Click(object sender, EventArgs e)
+        private void PreButton_Click(object sender, EventArgs e)
         {
             currentRow -= 1;
-            gotoRow(currentRow);
+            GotoRow(currentRow);
         }
 
         //下一筆按鈕
-        private void nextButton_Click(object sender, EventArgs e)
+        private void NextButton_Click(object sender, EventArgs e)
         {
             currentRow += 1;
-            gotoRow(currentRow);
+            GotoRow(currentRow);
         }
 
         //最後一筆按鈕
-        private void lastButton_Click(object sender, EventArgs e)
+        private void LastButton_Click(object sender, EventArgs e)
         {
             currentRow = objDV.Rows.Count - 1;
-            gotoRow(currentRow);
+            GotoRow(currentRow);
         }
 
         //啟動編輯模式
-        private void enableEdit()
+        private void EnableEdit()
         {
             dateTextBox.Enabled = true;
             textBox1.Enabled = true;
@@ -211,7 +211,7 @@ namespace DailyCash
         }
 
         //關閉編輯模式
-        private void disableEdit()
+        private void DisableEdit()
         {
             dateTextBox.Enabled = false;
             textBox1.Enabled = false;
@@ -229,9 +229,9 @@ namespace DailyCash
             lastButton.Enabled = true;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
-            enableEdit();
+            EnableEdit();
             dateTextBox.Text = "";
             textBox1.Text = "";
             textBox2.Text = "";
@@ -242,15 +242,15 @@ namespace DailyCash
             dateTextBox.Focus();
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void Button2_Click(object sender, EventArgs e)
         {
-            enableEdit();
+            EnableEdit();
             editStatus = 2;
             button1.Enabled = false;
             button3.Enabled = false;
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void Button3_Click(object sender, EventArgs e)
         {
             DialogResult answer = MessageBox.Show("您確定要刪除此筆資料嗎？", "刪除資料", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
 
@@ -264,14 +264,14 @@ namespace DailyCash
                 //執行資料庫指令OleDbCommand
                 cmd.ExecuteNonQuery();
 
-                refreshData();
+                RefreshData();
                 currentRow = 0;
-                gotoRow(currentRow);
+                GotoRow(currentRow);
             }
-            updateDate();
+            UpdateDate();
         }
 
-        private void okButton_Click(object sender, EventArgs e)
+        private void OkButton_Click(object sender, EventArgs e)
         {
             DialogResult answer;
 
@@ -290,9 +290,9 @@ namespace DailyCash
                     //執行資料庫指令OleDbCommand
                     cmd.ExecuteNonQuery();
 
-                    refreshData();
+                    RefreshData();
                     currentRow = 0;
-                    gotoRow(currentRow);
+                    GotoRow(currentRow);
                 }
             }
             else if (editStatus == 2)
@@ -310,15 +310,15 @@ namespace DailyCash
                     //執行資料庫指令OleDbCommand
                     cmd.ExecuteNonQuery();
 
-                    refreshData();
-                    gotoRow(currentRow);
+                    RefreshData();
+                    GotoRow(currentRow);
                 }
             }
-            disableEdit();
-            updateDate();
+            DisableEdit();
+            UpdateDate();
         }
 
-        private void btnCrawl_Click(object sender, EventArgs e)
+        private void BtnCrawl_Click(object sender, EventArgs e)
         {
             string urlAddress = "https://www.taiwanlottery.com.tw/Lotto/Dailycash/history.aspx";
 

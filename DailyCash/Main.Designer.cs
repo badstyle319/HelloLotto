@@ -340,7 +340,7 @@
             this.btnCrawl.TabIndex = 21;
             this.btnCrawl.Text = "爬蟲";
             this.btnCrawl.UseVisualStyleBackColor = true;
-            this.btnCrawl.Click += new System.EventHandler(this.btnCrawl_Click);
+            this.btnCrawl.Click += new System.EventHandler(this.BtnCrawl_Click);
             // 
             // okButton
             // 
@@ -352,7 +352,7 @@
             this.okButton.TabIndex = 20;
             this.okButton.Text = "確定";
             this.okButton.UseVisualStyleBackColor = true;
-            this.okButton.Click += new System.EventHandler(this.okButton_Click);
+            this.okButton.Click += new System.EventHandler(this.OkButton_Click);
             // 
             // button3
             // 
@@ -363,7 +363,7 @@
             this.button3.TabIndex = 19;
             this.button3.Text = "刪除資料";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
+            this.button3.Click += new System.EventHandler(this.Button3_Click);
             // 
             // button2
             // 
@@ -374,7 +374,7 @@
             this.button2.TabIndex = 18;
             this.button2.Text = "修改資料";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // button1
             // 
@@ -385,7 +385,7 @@
             this.button1.TabIndex = 17;
             this.button1.Text = "新增資料";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1_Click);
             // 
             // messageLabel
             // 
@@ -405,7 +405,7 @@
             this.lastButton.TabIndex = 15;
             this.lastButton.Text = "最後一筆";
             this.lastButton.UseVisualStyleBackColor = true;
-            this.lastButton.Click += new System.EventHandler(this.lastButton_Click);
+            this.lastButton.Click += new System.EventHandler(this.LastButton_Click);
             // 
             // nextButton
             // 
@@ -416,7 +416,7 @@
             this.nextButton.TabIndex = 14;
             this.nextButton.Text = "下一筆";
             this.nextButton.UseVisualStyleBackColor = true;
-            this.nextButton.Click += new System.EventHandler(this.nextButton_Click);
+            this.nextButton.Click += new System.EventHandler(this.NextButton_Click);
             // 
             // preButton
             // 
@@ -427,7 +427,7 @@
             this.preButton.TabIndex = 13;
             this.preButton.Text = "上一筆";
             this.preButton.UseVisualStyleBackColor = true;
-            this.preButton.Click += new System.EventHandler(this.preButton_Click);
+            this.preButton.Click += new System.EventHandler(this.PreButton_Click);
             // 
             // firstButton
             // 
@@ -438,7 +438,7 @@
             this.firstButton.TabIndex = 12;
             this.firstButton.Text = "第一筆";
             this.firstButton.UseVisualStyleBackColor = true;
-            this.firstButton.Click += new System.EventHandler(this.firstButton_Click);
+            this.firstButton.Click += new System.EventHandler(this.FirstButton_Click);
             // 
             // textBox5
             // 
