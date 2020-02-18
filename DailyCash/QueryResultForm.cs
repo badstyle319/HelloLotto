@@ -22,7 +22,9 @@ namespace DailyCash
         public QueryResultForm()
         {
             InitializeComponent();
-
+        }
+        private void QueryResultForm_Load(object sender, EventArgs e)
+        {
             try
             {
                 conn = new OleDbConnection(strConn);
@@ -38,9 +40,9 @@ namespace DailyCash
                 dataGridView1.DataSource = result1;
                 dataGridView2.DataSource = result2;
             }
-            catch (Exception e)
+            catch (Exception e1)
             {
-                MessageBox.Show(e.Message);
+                MessageBox.Show(e1.Message);
                 return;
             }
 
@@ -62,21 +64,23 @@ namespace DailyCash
         public void refresh()
         {
             deleteSameRow();
+
             //記錄號碼與尾數出現次數
             int[] count = new int[49];
             int[] tail = new int[10];
 
             for (int i = 0; i < totalTable.Rows.Count; i++)
+            {
                 for (int j = 1; j < totalTable.Columns.Count; j++)
                 {
                     int temp = System.Convert.ToInt32(totalTable.Rows[i][j]);
                     count[temp - 1]++;
                     tail[temp % 10]++;
                 }
+            }
 
             int[] topFiveTail = findTopNIndex(tail, 5);
             int[] topTenNum = findTopNIndex(count, 10);
-
 
             //result1 process
             for (int i = 0; i < result1.Rows.Count; i++)
@@ -85,7 +89,6 @@ namespace DailyCash
                 result1.Rows[i]["次數"] = count[topTenNum[i]];
                 result1.Rows[i]["機率"] = count[topTenNum[i]] / 49.0 / 7.0;
             }
-
 
             //result2 process
             for (int i = 0; i < result2.Rows.Count; i++)

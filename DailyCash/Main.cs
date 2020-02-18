@@ -33,7 +33,6 @@ namespace DailyCash
         string newestDate = "";
         //舊查詢中之統計數字陣列
         int[] totalNum = new int[49];
-        QueryResultForm qrForm = new QueryResultForm();
 
         public Main()
         {
@@ -42,7 +41,7 @@ namespace DailyCash
             editStatus = 0;
             messageLabel.Text = "";
 
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
             ServicePointManager.DefaultConnectionLimit = 50;
         }
 
@@ -56,8 +55,22 @@ namespace DailyCash
             catch (Exception e1)
             {
                 MessageBox.Show(e1.Message);
+                this.Close();
                 return;
             }
+
+            try
+            {
+                string sql = "create table dailycash (日期 int, " +
+                "一 int, 二 int, 三 int, 四 int, 五 int)";
+                OleDbCommand cmd = new OleDbCommand(sql, conn);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception e1)
+            {
+                Console.WriteLine(e1.Message);
+            }
+
             refreshData();
             gotoRow(currentRow);
             updateDate();
@@ -73,7 +86,6 @@ namespace DailyCash
         private void refreshData()
         {
             datasetNum.Clear();
-            //	進行連結資料庫
 
             //oledbdataadapter物件建立資料表查詢結果
             //	宣告並設定  查詢『num 資料表』字串
@@ -81,7 +93,7 @@ namespace DailyCash
             //	宣告並設定  資料表查詢物件『adapter』
             adapter = new OleDbDataAdapter(str, conn);
 
-            //	將伺服器資料庫的查詢結果（adapter）存放並填滿到終端機的暫存物件（datasetNum）上的表格"num"
+            //	將伺服器資料庫的查詢結果（adapter）存放並填滿到終端機的暫存物件（datasetNum）上的表格"dailycash"
             adapter.Fill(datasetNum, "dailycash");
 
             //在datagrid來顯示dataset上的資料
@@ -89,7 +101,6 @@ namespace DailyCash
             int nRowNum = datasetNum.Tables["dailycash"].Rows.Count;
             if (nRowNum != 0)
                 newestDate = datasetNum.Tables["dailycash"].Rows[nRowNum - 1]["日期"].ToString();
-            //關閉連線
 
             objDV.ClearSelection();
         }
@@ -305,57 +316,6 @@ namespace DailyCash
             }
             disableEdit();
             updateDate();
-        }
-
-        string strMagic = "";
-        private void Main_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == System.Windows.Forms.MouseButtons.Left)
-            {
-                strMagic += "0";
-            }
-            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
-            {
-                strMagic += "1";
-            }
-
-            string strClick = strMagic.Length >= 4 ? strMagic.Substring(0, 4) : strMagic;
-            if (strClick == "0101")
-            {
-                Console.WriteLine("create table dailycash");
-
-                string sql = "create table dailycash (日期 int, " +
-                "一 int, 二 int, 三 int, 四 int, 五 int)";
-                OleDbCommand cmd = new OleDbCommand(sql, conn);
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception e1)
-                {
-                    Console.WriteLine(e1.Message);
-                }
-                strMagic = "";
-            }
-            else if (strClick == "1010")
-            {
-                Console.WriteLine("drop table dailycash");
-
-                string sql = "drop table dailycash";
-                OleDbCommand cmd = new OleDbCommand(sql, conn);
-                try
-                {
-                    cmd.ExecuteNonQuery();
-                }
-                catch (Exception e1)
-                {
-                    Console.WriteLine(e1.Message);
-                }
-                strMagic = "";
-            }
-
-            if (strMagic.Length > 10)
-                strMagic = "";
         }
 
         private void btnCrawl_Click(object sender, EventArgs e)
