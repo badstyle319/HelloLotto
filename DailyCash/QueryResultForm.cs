@@ -12,38 +12,40 @@ namespace DailyCash
 {
     public partial class QueryResultForm : Form
     {
-        string strConn = "Provider=Microsoft.Jet.Oledb.4.0;Data Source=LT.mdb";
+        const string strConn = "Provider=Microsoft.Jet.Oledb.4.0;Data Source=LT.mdb";
         OleDbConnection conn;
         OleDbDataAdapter adapter;
-        public DataTable result1;
-        public DataTable result2;
-        public DataTable totalTable;
+        public DataTable result1 = new DataTable();
+        public DataTable result2 = new DataTable();
+        public DataTable totalTable = new DataTable();
 
         public QueryResultForm()
         {
             InitializeComponent();
-            function();
+
+            try
+            {
+                conn = new OleDbConnection(strConn);
+
+                String str = "select * from result1";
+                adapter = new OleDbDataAdapter(str, conn);
+                adapter.Fill(result1);
+
+                str = "select * from result2";
+                adapter = new OleDbDataAdapter(str, conn);
+                adapter.Fill(result2);
+
+                dataGridView1.DataSource = result1;
+                dataGridView2.DataSource = result2;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+                return;
+            }
+
             dataGridView1.ClearSelection();
             dataGridView2.ClearSelection();
-        }
-
-        private void function()
-        {
-            conn=new OleDbConnection(strConn);
-            result1 = new DataTable();
-            result2 = new DataTable();
-            totalTable = new DataTable();
-
-            String str = "select * from result1";
-            adapter = new OleDbDataAdapter(str, conn);
-            adapter.Fill(result1);
-
-            str = "select * from result2";
-            adapter = new OleDbDataAdapter(str, conn);
-            adapter.Fill(result2);
-
-            dataGridView1.DataSource = result1;
-            dataGridView2.DataSource = result2;
         }
 
         private void clearButton_Click(object sender, EventArgs e)
@@ -54,7 +56,7 @@ namespace DailyCash
 
         private void deleteSameRow()
         {
-            
+
         }
 
         public void refresh()

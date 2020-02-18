@@ -5,22 +5,25 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.OleDb;
+using System.Net;
+using System.IO;
+using System.IO.Compression;
+using HtmlAgilityPack;
 
 namespace DailyCash
 {
-    public partial class Form1 : Form
+    public partial class Main : Form
     {
         //記錄目前所選資料索引
         static int currentRow = 0;
 
         //connection連結到資料庫
         //	宣告並設定  連接字串
-        static string strConn = "Provider=Microsoft.Jet.Oledb.4.0;Data Source=LT.mdb";
+        const string strConn = "Provider=Microsoft.Jet.Oledb.4.0;Data Source=LT.mdb";
         //	宣告並設定  連接物件conn
-        OleDbConnection conn = new OleDbConnection(strConn);
+        OleDbConnection conn;
         //dataset11物件置於暫時記憶體，以存放查詢結果
         //	宣告並設定 終端機電腦記憶體的暫存物件『datasetNum』
         DataSet datasetNum = new DataSet();
@@ -32,25 +35,38 @@ namespace DailyCash
         int[] totalNum = new int[49];
         QueryResultForm qrForm = new QueryResultForm();
 
-        public Form1()
+        public Main()
         {
             InitializeComponent();
 
             editStatus = 0;
+            messageLabel.Text = "";
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+            ServicePointManager.DefaultConnectionLimit = 50;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            conn.Open();
-            string sql = "create table dailycash (日期 int, " +
-            "一 int, 二 int, 三 int, 四 int, 五 int)";
-            OleDbCommand cmd = new OleDbCommand(sql, conn);
-            cmd.ExecuteNonQuery();
-            conn.Close();
-
+            try
+            {
+                conn = new OleDbConnection(strConn);
+                conn.Open();
+            }
+            catch (Exception e1)
+            {
+                MessageBox.Show(e1.Message);
+                return;
+            }
             refreshData();
             gotoRow(currentRow);
             updateDate();
+        }
+
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (conn.State == ConnectionState.Open)
+                conn.Close();
         }
 
         //更新資料庫內容到異動datagrid上
@@ -58,7 +74,7 @@ namespace DailyCash
         {
             datasetNum.Clear();
             //	進行連結資料庫
-            conn.Open();
+
             //oledbdataadapter物件建立資料表查詢結果
             //	宣告並設定  查詢『num 資料表』字串
             string str = "select * from dailycash order by 日期";
@@ -74,7 +90,6 @@ namespace DailyCash
             if (nRowNum != 0)
                 newestDate = datasetNum.Tables["dailycash"].Rows[nRowNum - 1]["日期"].ToString();
             //關閉連線
-            conn.Close();
 
             objDV.ClearSelection();
         }
@@ -230,8 +245,6 @@ namespace DailyCash
 
             if (answer == DialogResult.Yes)
             {
-                conn.Open();
-
                 //刪除資料庫內的記錄
                 //	設定刪除記錄的 SQL語法 及資料庫執行指令OleDbCommand
                 string str = "delete * from dailycash where 日期=" + Int32.Parse(dateTextBox.Text) + "";
@@ -239,9 +252,6 @@ namespace DailyCash
 
                 //執行資料庫指令OleDbCommand
                 cmd.ExecuteNonQuery();
-
-                //關閉資料庫連接
-                conn.Close();
 
                 refreshData();
                 currentRow = 0;
@@ -260,8 +270,6 @@ namespace DailyCash
 
                 if (answer == DialogResult.Yes)
                 {
-                    conn.Open();
-
                     //新增記錄到資料庫內
                     //	設定新增記錄的 SQL語法 及資料庫執行指令OleDbCommand
                     string str = "Insert Into dailycash(日期,一,二,三,四,五)Values(" + Int32.Parse(dateTextBox.Text) + "," + Int32.Parse(textBox1.Text) + "," + Int32.Parse(textBox2.Text) + "," + Int32.Parse(textBox3.Text) + "," + Int32.Parse(textBox4.Text) + "," + Int32.Parse(textBox5.Text) + ")";
@@ -270,9 +278,6 @@ namespace DailyCash
 
                     //執行資料庫指令OleDbCommand
                     cmd.ExecuteNonQuery();
-
-                    //關閉資料庫連接
-                    conn.Close();
 
                     refreshData();
                     currentRow = 0;
@@ -285,8 +290,6 @@ namespace DailyCash
 
                 if (answer == DialogResult.Yes)
                 {
-                    conn.Open();
-
                     //修改資料庫內的記錄
                     //	設定修改記錄的  SQL語法及資料庫執行指令OleDbCommand
                     string str = "Update dailycash set 日期 = " + Int32.Parse(dateTextBox.Text) + ",一=" + Int32.Parse(textBox1.Text) + ",二=" + Int32.Parse(textBox2.Text) + ",三=" + Int32.Parse(textBox3.Text) + ",四=" + Int32.Parse(textBox4.Text) + ",五=" + Int32.Parse(textBox5.Text) + " where 日期= " + Int32.Parse(dateTextBox.Text) + "";
@@ -296,15 +299,137 @@ namespace DailyCash
                     //執行資料庫指令OleDbCommand
                     cmd.ExecuteNonQuery();
 
-                    //關閉資料庫連接
-                    conn.Close();
-
                     refreshData();
                     gotoRow(currentRow);
                 }
             }
             disableEdit();
             updateDate();
+        }
+
+        string strMagic = "";
+        private void Main_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                strMagic += "0";
+            }
+            else if (e.Button == System.Windows.Forms.MouseButtons.Right)
+            {
+                strMagic += "1";
+            }
+
+            string strClick = strMagic.Length >= 4 ? strMagic.Substring(0, 4) : strMagic;
+            if (strClick == "0101")
+            {
+                Console.WriteLine("create table dailycash");
+
+                string sql = "create table dailycash (日期 int, " +
+                "一 int, 二 int, 三 int, 四 int, 五 int)";
+                OleDbCommand cmd = new OleDbCommand(sql, conn);
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e1)
+                {
+                    Console.WriteLine(e1.Message);
+                }
+                strMagic = "";
+            }
+            else if (strClick == "1010")
+            {
+                Console.WriteLine("drop table dailycash");
+
+                string sql = "drop table dailycash";
+                OleDbCommand cmd = new OleDbCommand(sql, conn);
+                try
+                {
+                    cmd.ExecuteNonQuery();
+                }
+                catch (Exception e1)
+                {
+                    Console.WriteLine(e1.Message);
+                }
+                strMagic = "";
+            }
+
+            if (strMagic.Length > 10)
+                strMagic = "";
+        }
+
+        private void btnCrawl_Click(object sender, EventArgs e)
+        {
+            string urlAddress = "https://www.taiwanlottery.com.tw/Lotto/Dailycash/history.aspx";
+
+            var request = (HttpWebRequest)WebRequest.Create(urlAddress);
+            var str = "";
+
+            request.ServicePoint.Expect100Continue = false;
+            request.ServicePoint.UseNagleAlgorithm = false;
+            request.AllowAutoRedirect = false;
+            request.AllowWriteStreamBuffering = false;
+            request.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip,deflate");
+            request.Accept = "*/*";
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.106 Safari/537.36";
+            request.Timeout = 5000;
+            request.Method = "GET";
+
+            using (var response = (HttpWebResponse)request.GetResponse())
+            {
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    var strContentEncoding = response.ContentEncoding.ToLower();
+                    if (strContentEncoding.Contains("gzip"))
+                    {
+                        Console.WriteLine("gzip stream:");
+                        using (GZipStream stream = new GZipStream(response.GetResponseStream(), CompressionMode.Decompress))
+                        {
+                            using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.UTF8))
+                            {
+                                str = sr.ReadToEnd();
+                            }
+                        }
+                    }
+                    else if (strContentEncoding.Contains("deflate"))
+                    {
+                        Console.WriteLine("deflate stream:");
+                        using (DeflateStream stream = new DeflateStream(response.GetResponseStream(), CompressionMode.Decompress))
+                        {
+                            using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.UTF8))
+                            {
+                                str = sr.ReadToEnd();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("normal stream:");
+                        using (Stream stream = response.GetResponseStream())
+                        {
+                            using (StreamReader sr = new StreamReader(stream, System.Text.Encoding.UTF8))
+                            {
+                                str = sr.ReadToEnd();
+                            }
+                        }
+                    }
+                    Console.WriteLine(str);
+
+                    //Stream receiveStream = response.GetResponseStream();
+                    //StreamReader readStream = null;
+
+                    //if (String.IsNullOrEmpty(response.CharacterSet))
+                    //    readStream = new StreamReader(receiveStream);
+                    //else
+                    //    readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
+
+                    //string data = readStream.ReadToEnd();
+                    //Console.WriteLine(data);
+                    //response.Close();
+                    //readStream.Close();
+                }
+            }
         }
     }
 }
