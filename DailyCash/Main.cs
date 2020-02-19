@@ -15,24 +15,25 @@ namespace DailyCash
 {
     public partial class Main : Form
     {
+        const string DB_CONN = "Provider=Microsoft.Jet.Oledb.4.0;Data Source=LT.mdb";
+
+        //記錄最新一筆資料之日期
+        string newestDate = "";
+        
         //記錄目前所選資料索引
         static int currentRow = 0;
 
-        //connection連結到資料庫
-        //	宣告並設定  連接字串
-        const string strConn = "Provider=Microsoft.Jet.Oledb.4.0;Data Source=LT.mdb";
-        //	宣告並設定  連接物件conn
-        OleDbConnection conn;
-        //dataset11物件置於暫時記憶體，以存放查詢結果
-        //	宣告並設定 終端機電腦記憶體的暫存物件『datasetNum』
-        DataSet datasetNum = new DataSet();
-        OleDbDataAdapter adapter;
         int editStatus;//1表示新增資料,2表示修改資料
-        //記錄最新一筆資料之日期
-        string newestDate = "";
+
         //舊查詢中之統計數字陣列
         int[] totalNum = new int[49];
 
+        OleDbConnection conn;
+        //dataset物件置於暫時記憶體，以存放查詢結果
+        //宣告並設定 終端機電腦記憶體的暫存物件『datasetNum』
+        DataSet datasetNum = new DataSet();
+        OleDbDataAdapter adapter;
+        
         public Main()
         {
             InitializeComponent();
@@ -40,7 +41,12 @@ namespace DailyCash
             editStatus = 0;
             messageLabel.Text = "";
 
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13;
+#if (NET45 || NET48)
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+#else
+            //may not work for https website
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
+#endif
             ServicePointManager.DefaultConnectionLimit = 50;
         }
 
@@ -48,7 +54,7 @@ namespace DailyCash
         {
             try
             {
-                conn = new OleDbConnection(strConn);
+                conn = new OleDbConnection(DB_CONN);
                 conn.Open();
             }
             catch (Exception e1)
@@ -199,10 +205,10 @@ namespace DailyCash
             textBox3.Enabled = true;
             textBox4.Enabled = true;
             textBox5.Enabled = true;
-            okButton.Enabled = true;
-            button1.Enabled = false;
-            button2.Enabled = false;
-            button3.Enabled = false;
+            btnDBOK.Enabled = true;
+            btnDBCreate.Enabled = false;
+            btnDBUpdate.Enabled = false;
+            btnDBDelete.Enabled = false;
             firstButton.Enabled = false;
             preButton.Enabled = false;
             nextButton.Enabled = false;
@@ -218,103 +224,14 @@ namespace DailyCash
             textBox3.Enabled = false;
             textBox4.Enabled = false;
             textBox5.Enabled = false;
-            okButton.Enabled = false;
-            button1.Enabled = true;
-            button2.Enabled = true;
-            button3.Enabled = true;
+            btnDBOK.Enabled = false;
+            btnDBCreate.Enabled = true;
+            btnDBUpdate.Enabled = true;
+            btnDBDelete.Enabled = true;
             firstButton.Enabled = true;
             preButton.Enabled = true;
             nextButton.Enabled = true;
             lastButton.Enabled = true;
-        }
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            EnableEdit();
-            dateTextBox.Text = "";
-            textBox1.Text = "";
-            textBox2.Text = "";
-            textBox3.Text = "";
-            textBox4.Text = "";
-            textBox5.Text = "";
-            editStatus = 1;
-            dateTextBox.Focus();
-        }
-
-        private void Button2_Click(object sender, EventArgs e)
-        {
-            EnableEdit();
-            editStatus = 2;
-            button1.Enabled = false;
-            button3.Enabled = false;
-        }
-
-        private void Button3_Click(object sender, EventArgs e)
-        {
-            DialogResult answer = MessageBox.Show("您確定要刪除此筆資料嗎？", "刪除資料", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-
-            if (answer == DialogResult.Yes)
-            {
-                //刪除資料庫內的記錄
-                //	設定刪除記錄的 SQL語法 及資料庫執行指令OleDbCommand
-                string str = "delete * from dailycash where 日期=" + Int32.Parse(dateTextBox.Text) + "";
-                OleDbCommand cmd = new OleDbCommand(str, conn);
-
-                //執行資料庫指令OleDbCommand
-                cmd.ExecuteNonQuery();
-
-                RefreshData();
-                currentRow = 0;
-                GotoRow(currentRow);
-            }
-            UpdateDate();
-        }
-
-        private void OkButton_Click(object sender, EventArgs e)
-        {
-            DialogResult answer;
-
-            if (editStatus == 1)
-            {
-                answer = MessageBox.Show("您確定要新增此筆資料嗎？", "新增資料", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-
-                if (answer == DialogResult.Yes)
-                {
-                    //新增記錄到資料庫內
-                    //	設定新增記錄的 SQL語法 及資料庫執行指令OleDbCommand
-                    string str = "Insert Into dailycash(日期,一,二,三,四,五)Values(" + Int32.Parse(dateTextBox.Text) + "," + Int32.Parse(textBox1.Text) + "," + Int32.Parse(textBox2.Text) + "," + Int32.Parse(textBox3.Text) + "," + Int32.Parse(textBox4.Text) + "," + Int32.Parse(textBox5.Text) + ")";
-
-                    OleDbCommand cmd = new OleDbCommand(str, conn);
-
-                    //執行資料庫指令OleDbCommand
-                    cmd.ExecuteNonQuery();
-
-                    RefreshData();
-                    currentRow = 0;
-                    GotoRow(currentRow);
-                }
-            }
-            else if (editStatus == 2)
-            {
-                answer = MessageBox.Show("您確定要修改此筆資料嗎？", "修改資料", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
-
-                if (answer == DialogResult.Yes)
-                {
-                    //修改資料庫內的記錄
-                    //	設定修改記錄的  SQL語法及資料庫執行指令OleDbCommand
-                    string str = "Update dailycash set 日期 = " + Int32.Parse(dateTextBox.Text) + ",一=" + Int32.Parse(textBox1.Text) + ",二=" + Int32.Parse(textBox2.Text) + ",三=" + Int32.Parse(textBox3.Text) + ",四=" + Int32.Parse(textBox4.Text) + ",五=" + Int32.Parse(textBox5.Text) + " where 日期= " + Int32.Parse(dateTextBox.Text) + "";
-
-                    OleDbCommand cmd = new OleDbCommand(str, conn);
-
-                    //執行資料庫指令OleDbCommand
-                    cmd.ExecuteNonQuery();
-
-                    RefreshData();
-                    GotoRow(currentRow);
-                }
-            }
-            DisableEdit();
-            UpdateDate();
         }
 
         private void BtnCrawl_Click(object sender, EventArgs e)
@@ -389,6 +306,95 @@ namespace DailyCash
                     //readStream.Close();
                 }
             }
+        }
+
+        private void btnDBCreate_Click(object sender, EventArgs e)
+        {
+            EnableEdit();
+            dateTextBox.Text = "";
+            textBox1.Text = "";
+            textBox2.Text = "";
+            textBox3.Text = "";
+            textBox4.Text = "";
+            textBox5.Text = "";
+            editStatus = 1;
+            dateTextBox.Focus();
+        }
+
+        private void btnDBUpdate_Click(object sender, EventArgs e)
+        {
+            EnableEdit();
+            editStatus = 2;
+            btnDBCreate.Enabled = false;
+            btnDBDelete.Enabled = false;
+        }
+
+        private void btnDBDelete_Click(object sender, EventArgs e)
+        {
+            DialogResult answer = MessageBox.Show("您確定要刪除此筆資料嗎？", "刪除資料", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+
+            if (answer == DialogResult.Yes)
+            {
+                //刪除資料庫內的記錄
+                //	設定刪除記錄的 SQL語法 及資料庫執行指令OleDbCommand
+                string str = "delete * from dailycash where 日期=" + Int32.Parse(dateTextBox.Text) + "";
+                OleDbCommand cmd = new OleDbCommand(str, conn);
+
+                //執行資料庫指令OleDbCommand
+                cmd.ExecuteNonQuery();
+
+                RefreshData();
+                currentRow = 0;
+                GotoRow(currentRow);
+            }
+            UpdateDate();
+        }
+
+        private void btnDBOK_Click(object sender, EventArgs e)
+        {
+            DialogResult answer;
+
+            if (editStatus == 1)
+            {
+                answer = MessageBox.Show("您確定要新增此筆資料嗎？", "新增資料", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+
+                if (answer == DialogResult.Yes)
+                {
+                    //新增記錄到資料庫內
+                    //	設定新增記錄的 SQL語法 及資料庫執行指令OleDbCommand
+                    string str = "Insert Into dailycash(日期,一,二,三,四,五)Values(" + Int32.Parse(dateTextBox.Text) + "," + Int32.Parse(textBox1.Text) + "," + Int32.Parse(textBox2.Text) + "," + Int32.Parse(textBox3.Text) + "," + Int32.Parse(textBox4.Text) + "," + Int32.Parse(textBox5.Text) + ")";
+
+                    OleDbCommand cmd = new OleDbCommand(str, conn);
+
+                    //執行資料庫指令OleDbCommand
+                    cmd.ExecuteNonQuery();
+
+                    RefreshData();
+                    currentRow = 0;
+                    GotoRow(currentRow);
+                }
+            }
+            else if (editStatus == 2)
+            {
+                answer = MessageBox.Show("您確定要修改此筆資料嗎？", "修改資料", MessageBoxButtons.YesNo, MessageBoxIcon.Exclamation);
+
+                if (answer == DialogResult.Yes)
+                {
+                    //修改資料庫內的記錄
+                    //	設定修改記錄的  SQL語法及資料庫執行指令OleDbCommand
+                    string str = "Update dailycash set 日期 = " + Int32.Parse(dateTextBox.Text) + ",一=" + Int32.Parse(textBox1.Text) + ",二=" + Int32.Parse(textBox2.Text) + ",三=" + Int32.Parse(textBox3.Text) + ",四=" + Int32.Parse(textBox4.Text) + ",五=" + Int32.Parse(textBox5.Text) + " where 日期= " + Int32.Parse(dateTextBox.Text) + "";
+
+                    OleDbCommand cmd = new OleDbCommand(str, conn);
+
+                    //執行資料庫指令OleDbCommand
+                    cmd.ExecuteNonQuery();
+
+                    RefreshData();
+                    GotoRow(currentRow);
+                }
+            }
+            DisableEdit();
+            UpdateDate();
         }
     }
 }

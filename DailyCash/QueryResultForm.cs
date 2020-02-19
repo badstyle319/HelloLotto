@@ -12,7 +12,8 @@ namespace DailyCash
 {
     public partial class QueryResultForm : Form
     {
-        const string strConn = "Provider=Microsoft.Jet.Oledb.4.0;Data Source=LT.mdb";
+        const string DB_CONN = "Provider=Microsoft.Jet.Oledb.4.0;Data Source=LT.mdb";
+
         OleDbConnection conn;
         OleDbDataAdapter adapter;
         public DataTable result1 = new DataTable();
@@ -27,7 +28,7 @@ namespace DailyCash
         {
             try
             {
-                conn = new OleDbConnection(strConn);
+                conn = new OleDbConnection(DB_CONN);
 
                 String str = "select * from result1";
                 adapter = new OleDbDataAdapter(str, conn);
