@@ -258,7 +258,6 @@ namespace DailyCash
             List<HtmlNode> section = new List<HtmlNode>();
 
             NameValueCollection postData = new NameValueCollection();
-
             postData.Add("D539Control_history1$DropDownList1", "5");
             postData.Add("D539Control_history1$chk", "radYM");
             postData.Add("D539Control_history1$dropYear", "109");
@@ -269,17 +268,21 @@ namespace DailyCash
 
             HtmlWeb.PreRequestHandler handler = delegate (HttpWebRequest request)
             {
+                request.ServicePoint.Expect100Continue = false;
+                request.AllowAutoRedirect = false;
+                request.CookieContainer = new CookieContainer();
                 string payLoad = AssemblePostPayload(postData);
-                byte[] buff = Encoding.ASCII.GetBytes(payLoad.ToCharArray());
+                byte[] buff = Encoding.UTF8.GetBytes(payLoad.ToCharArray());
                 request.ContentLength = buff.Length;
                 request.ContentType = "application/x-www-form-urlencoded";
-                Stream reqStream = request.GetRequestStream();
-                reqStream.Write(buff, 0, buff.Length);
+                request.GetRequestStream().Write(buff, 0, buff.Length);
+                Console.WriteLine(buff.Length);
                 return true;
             };
 
             web.PreRequest += handler;
             var doc = web.Load(urlAddress, "POST");
+            web.PreRequest -= handler;
             var children = doc.DocumentNode.SelectNodes("//span[contains(@id,'D539Control_history1_dlQuery_D539_DDate')] | //span[contains(@id,'D539Control_history1_dlQuery_SNo')]");
 
             for (int i = 0; i < children.Count; i += 6)
