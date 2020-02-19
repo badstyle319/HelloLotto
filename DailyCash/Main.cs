@@ -254,34 +254,33 @@ namespace DailyCash
         {
             string urlAddress = "https://www.taiwanlottery.com.tw/Lotto/Dailycash/history.aspx";
 
-#if !_DEBUG
+            StringBuilder sb = new StringBuilder();
+            AppendParameter(sb, "D539Control_history1$DropDownList1", "5");
+            AppendParameter(sb, "D539Control_history1$chk", "radYM");
+            AppendParameter(sb, "D539Control_history1$dropYear", "109");
+            AppendParameter(sb, "D539Control_history1$dropMonth", "1");
+            AppendParameter(sb, "D539Control_history1$btnSubmit", "查詢");
+
+            byte[] buff = Encoding.UTF8.GetBytes(sb.ToString());
+#if _DEBUG
             List<HtmlNode> section = new List<HtmlNode>();
-
-            NameValueCollection postData = new NameValueCollection();
-            postData.Add("D539Control_history1$DropDownList1", "5");
-            postData.Add("D539Control_history1$chk", "radYM");
-            postData.Add("D539Control_history1$dropYear", "109");
-            postData.Add("D539Control_history1$dropMonth", "1");
-            postData.Add("D539Control_history1$btnSubmit", "查詢");
-
             HtmlWeb web = new HtmlWeb();
 
             HtmlWeb.PreRequestHandler handler = delegate (HttpWebRequest request)
             {
-                request.ServicePoint.Expect100Continue = false;
-                request.AllowAutoRedirect = false;
-                request.CookieContainer = new CookieContainer();
-                string payLoad = AssemblePostPayload(postData);
-                byte[] buff = Encoding.UTF8.GetBytes(payLoad.ToCharArray());
-                request.ContentLength = buff.Length;
-                request.ContentType = "application/x-www-form-urlencoded";
-                request.GetRequestStream().Write(buff, 0, buff.Length);
-                Console.WriteLine(buff.Length);
+                if (request.Method == "POST")
+                {
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    Stream reqStream = request.GetRequestStream();
+                    reqStream.Write(buff, 0, buff.Length);
+                }
+
                 return true;
             };
 
             web.PreRequest += handler;
             var doc = web.Load(urlAddress, "POST");
+            Console.WriteLine(doc.Text);
             web.PreRequest -= handler;
             var children = doc.DocumentNode.SelectNodes("//span[contains(@id,'D539Control_history1_dlQuery_D539_DDate')] | //span[contains(@id,'D539Control_history1_dlQuery_SNo')]");
 
@@ -319,7 +318,9 @@ namespace DailyCash
             request.ContentType = "application/x-www-form-urlencoded";
             request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.106 Safari/537.36";
             request.Timeout = 5000;
-            request.Method = "GET";
+            request.Method = "POST";
+            request.ContentLength = buff.Length;
+            request.GetRequestStream().Write(buff, 0, buff.Length);
 
             using (var response = (HttpWebResponse)request.GetResponse())
             {
@@ -363,6 +364,12 @@ namespace DailyCash
                 }
             }
 #endif
+        }
+
+        protected void AppendParameter(StringBuilder sb, string name, string value)
+        {
+            string encodedValue = System.Net.WebUtility.UrlEncode(value);
+            sb.AppendFormat("{0}={1}&", name, encodedValue);
         }
 
         private string AssemblePostPayload(NameValueCollection fv)
