@@ -10,6 +10,7 @@ using System.Data.OleDb;
 using System.Net;
 using System.IO;
 using System.IO.Compression;
+using HtmlAgilityPack;
 
 namespace DailyCash
 {
@@ -42,12 +43,12 @@ namespace DailyCash
             messageLabel.Text = "";
 
 #if (NET45 || NET48)
-            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Ssl3;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13 | SecurityProtocolType.Ssl3;
 #else
             //may not work for https website
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Ssl3;
 #endif
-            ServicePointManager.DefaultConnectionLimit = 50;
+            //ServicePointManager.DefaultConnectionLimit = 50;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -238,6 +239,11 @@ namespace DailyCash
         {
             string urlAddress = "https://www.taiwanlottery.com.tw/Lotto/Dailycash/history.aspx";
 
+#if !_DEBUG
+            HtmlWeb web = new HtmlWeb();
+            var doc = web.Load(urlAddress);
+            Console.WriteLine(doc.Text);
+#else
             var request = (HttpWebRequest)WebRequest.Create(urlAddress);
             var str = "";
 
@@ -291,21 +297,9 @@ namespace DailyCash
                         }
                     }
                     Console.WriteLine(str);
-
-                    //Stream receiveStream = response.GetResponseStream();
-                    //StreamReader readStream = null;
-
-                    //if (String.IsNullOrEmpty(response.CharacterSet))
-                    //    readStream = new StreamReader(receiveStream);
-                    //else
-                    //    readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
-
-                    //string data = readStream.ReadToEnd();
-                    //Console.WriteLine(data);
-                    //response.Close();
-                    //readStream.Close();
                 }
             }
+#endif
         }
 
         private void btnDBCreate_Click(object sender, EventArgs e)
