@@ -39,7 +39,7 @@ namespace _0726
         }
 
         private void Form1_Load(object sender, EventArgs e)
-        {          
+        {
             refreshData();
             gotoRow(currentRow);
             updateDate();
@@ -85,7 +85,7 @@ namespace _0726
             objDV.ClearSelection();
 
             clearColor(objDV);
-            
+
             dateTextBox.Text = datasetNum.Tables["num"].Rows[rowNumber]["日期"].ToString();
             textBox1.Text = datasetNum.Tables["num"].Rows[rowNumber]["一"].ToString();
             textBox2.Text = datasetNum.Tables["num"].Rows[rowNumber]["二"].ToString();
@@ -94,7 +94,7 @@ namespace _0726
             textBox5.Text = datasetNum.Tables["num"].Rows[rowNumber]["五"].ToString();
             textBox6.Text = datasetNum.Tables["num"].Rows[rowNumber]["六"].ToString();
             textBox7.Text = datasetNum.Tables["num"].Rows[rowNumber]["特"].ToString();
-            messageLabel.Text = "第 " + (rowNumber + 1) + " 筆，共有 " +datasetNum.Tables["num"].Rows.Count+" 筆資料。";
+            messageLabel.Text = "第 " + (rowNumber + 1) + " 筆，共有 " + datasetNum.Tables["num"].Rows.Count + " 筆資料。";
 
             objDV.FirstDisplayedScrollingRowIndex = rowNumber;
 
@@ -109,7 +109,7 @@ namespace _0726
                 preButton.Enabled = true;
             }
 
-            if (rowNumber >= datasetNum.Tables["num"].Rows.Count-1)
+            if (rowNumber >= datasetNum.Tables["num"].Rows.Count - 1)
             {
                 nextButton.Enabled = false;
                 lastButton.Enabled = false;
@@ -236,7 +236,7 @@ namespace _0726
 
                 //關閉資料庫連接
                 conn.Close();
-                
+
                 refreshData();
                 currentRow = 0;
                 gotoRow(currentRow);
@@ -380,10 +380,10 @@ namespace _0726
                     qrForm.totalTable.Merge(table);
                     qrForm.refresh();
                     qrForm.Show();
-                    
+
                     objDV1.ClearSelection();
                     int[] itemArr = findIndexTable(oriTable, table);
-                    sameColorNum(objDV1, itemArr,oriTable,table);
+                    sameColorNum(objDV1, itemArr, oriTable, table);
                 }
                 else
                     MessageBox.Show("請輸入欲查詢數字！");
@@ -540,13 +540,16 @@ namespace _0726
 
                     //新增記錄到資料庫內
                     //	設定新增記錄的 SQL語法 及資料庫執行指令OleDbCommand
-                    string str = "Insert Into num(日期,一,二,三,四,五,六,特)Values(" + Int32.Parse(dateTextBox.Text)  + "," + Int32.Parse(textBox1.Text) + "," + Int32.Parse(textBox2.Text) + "," + Int32.Parse(textBox3.Text) + "," + Int32.Parse(textBox4.Text) + "," + Int32.Parse(textBox5.Text) + "," + Int32.Parse(textBox6.Text) + "," + Int32.Parse(textBox7.Text) + ")";
+                    var obj = new OleDbCommand(string.Format("SELECT * FROM num WHERE 日期={0}", Int32.Parse(dateTextBox.Text)), conn).ExecuteScalar();
+                    if (obj == null)
+                    {
+                        string str = "INSERT INTO num(日期,一,二,三,四,五,六,特)VALUES(" + Int32.Parse(dateTextBox.Text) + "," + Int32.Parse(textBox1.Text) + "," + Int32.Parse(textBox2.Text) + "," + Int32.Parse(textBox3.Text) + "," + Int32.Parse(textBox4.Text) + "," + Int32.Parse(textBox5.Text) + "," + Int32.Parse(textBox6.Text) + "," + Int32.Parse(textBox7.Text) + ")";
 
-                    OleDbCommand cmd = new OleDbCommand(str, conn);
+                        OleDbCommand cmd = new OleDbCommand(str, conn);
 
-                    //執行資料庫指令OleDbCommand
-                    cmd.ExecuteNonQuery();
-
+                        //執行資料庫指令OleDbCommand
+                        cmd.ExecuteNonQuery();
+                    }
                     //關閉資料庫連接
                     conn.Close();
 
@@ -583,9 +586,9 @@ namespace _0726
             updateDate();
         }
 
-        private int[] findTopNIndex(int[] num,int n)
-        { 
-            int[] max=new int[n];
+        private int[] findTopNIndex(int[] num, int n)
+        {
+            int[] max = new int[n];
             int[] arr = new int[num.Length];
             num.CopyTo(arr, 0);
 
@@ -625,29 +628,29 @@ namespace _0726
                 for (int i = 1; i <= 7; i++)
                     if (num.Contains(Convert.ToInt32(row[i])))
                         return true;
-                return false;   
+                return false;
             }
         }
         //刪去table中不含所有陣列值的rows
-        private void tableFilter(DataTable table, int[] num,bool status)
+        private void tableFilter(DataTable table, int[] num, bool status)
         {
             for (int i = 0; i < table.Rows.Count; i++)
                 if (!containNums(table.Rows[i], num, status))
                 {
                     table.Rows[i].Delete();
-                    
+
                 }
             table.AcceptChanges();
         }
         //改變cellcolor
-        private void changeColor(DataGridView dgv, int num,Color color)
+        private void changeColor(DataGridView dgv, int num, Color color)
         {
             for (int i = 0; i < dgv.Rows.Count; i++)
                 for (int j = 1; j < dgv.Columns.Count; j++)
                     if (Convert.ToInt32(dgv.Rows[i].Cells[j].Value) == num)
                         dgv.Rows[i].Cells[j].Style.BackColor = color;
-                    else if(Convert.ToInt32(dgv.Rows[i].Cells[j].Value)%10==(num%10))
-                        dgv.Rows[i].Cells[j].Style.BackColor=Color.LightBlue;
+                    else if (Convert.ToInt32(dgv.Rows[i].Cells[j].Value) % 10 == (num % 10))
+                        dgv.Rows[i].Cells[j].Style.BackColor = Color.LightBlue;
             dgv.ClearSelection();
         }
         //清除cellcolor
@@ -680,7 +683,7 @@ namespace _0726
         private void sButton_Click(object sender, EventArgs e)
         {
             bool status = true;
-            int num=0;
+            int num = 0;
             numColumns input = new numColumns();
 
             if (sLocTextBox.Text != "")
@@ -705,9 +708,9 @@ namespace _0726
 
                 //oledbdataadapter物件建立資料表查詢結果
                 //	宣告並設定  查詢『num 資料表』字串
-                string str = "select 日期,一,二,三,四,五,六,特 from num where " 
+                string str = "select 日期,一,二,三,四,五,六,特 from num where "
                     + input + "= " + sNumTextBox.Text//Convert.ToInt32(sNumTextBox.Text) 
-                    + " and 日期 between " + sDateTextBox1.Text 
+                    + " and 日期 between " + sDateTextBox1.Text
                     + " and " + sDateTextBox2.Text + " order by 日期";
 
                 //	宣告並設定  資料表查詢物件『adapter』
@@ -735,7 +738,7 @@ namespace _0726
                 int[] itemArr = findIndexTable(oriTable, matchTable);
                 sameColorNum(sDataGridView, itemArr, oriTable, matchTable);
             }
-            else 
+            else
             {
                 //numColumns test = (numColumns)num;
                 //	進行連結資料庫
@@ -748,7 +751,7 @@ namespace _0726
                     + " or 三 = " + sNumTextBox.Text + " or 四 = " + sNumTextBox.Text
                     + " or 五 = " + sNumTextBox.Text + " or 六 = " + sNumTextBox.Text
                     + " or 特 = " + sNumTextBox.Text
-                    +") and 日期 between " + sDateTextBox1.Text 
+                    + ") and 日期 between " + sDateTextBox1.Text
                     + " and " + sDateTextBox2.Text + " order by 日期";
 
                 //	宣告並設定  資料表查詢物件『adapter』
@@ -777,10 +780,10 @@ namespace _0726
                 //int[] itemArr = findIndexTable(oriTable, matchTable);
                 //sameColorNum(sDataGridView, itemArr, oriTable, matchTable);
             }
-                //MessageBox.Show("不合法的輸入");
+            //MessageBox.Show("不合法的輸入");
         }
 
-        private void sameColorNum(DataGridView dgv,int[] array,DataTable oTable,DataTable mTable)
+        private void sameColorNum(DataGridView dgv, int[] array, DataTable oTable, DataTable mTable)
         {
             int[] arr = sort(array);
             if (arr.Length != 0)
@@ -793,8 +796,8 @@ namespace _0726
                     else if (arr[i] != (arr[i + 1] - 1))
                         counter++;
 
-                int[,] temp = new int[counter,2];
-                
+                int[,] temp = new int[counter, 2];
+
                 for (int i = 0; i < counter; i++)
                 {
                     if (i == 0)
@@ -813,7 +816,7 @@ namespace _0726
                         }
                 }
 
-                for(int i=0;i<counter;i++)
+                for (int i = 0; i < counter; i++)
                     if (i % 2 == 1)
                     {
                         for (int j = 0; j < temp[i, 1] - 1; j++)
@@ -822,7 +825,7 @@ namespace _0726
                     else
                     {
                         for (int k = 0; k < temp[i, 1]; k++)
-                            paintBack(dgv, oTable.Rows[temp[i, 0]+k], Color.LightGray);
+                            paintBack(dgv, oTable.Rows[temp[i, 0] + k], Color.LightGray);
 
                         for (int j = 0; j < temp[i, 1] - 1; j++)
                             paint(dgv, oTable.Rows[temp[i, 0] + j], oTable.Rows[temp[i, 0] + j + 1], Color.GreenYellow);
@@ -832,30 +835,30 @@ namespace _0726
         //將傳入之兩row之內含值相同者塗上color
         private void paint(DataGridView dgv, DataRow row1, DataRow row2, Color color)
         {
-            int m=-1, n=-1;
+            int m = -1, n = -1;
             for (int i = 0; i < dgv.Rows.Count; i++)
                 if (dgv.Rows[i].Cells["日期"].Value.Equals(row1["日期"]))
                     m = i;
                 else if (dgv.Rows[i].Cells["日期"].Value.Equals(row2["日期"]))
                     n = i;
-            
-            for(int i=1;i<=7;i++)
-                for(int j=1;j<=7;j++)
+
+            for (int i = 1; i <= 7; i++)
+                for (int j = 1; j <= 7; j++)
                     if (dgv.Rows[m].Cells[i].Value.Equals(dgv.Rows[n].Cells[j].Value))
                     {
                         dgv.Rows[m].Cells[i].Style.BackColor = color;
                         dgv.Rows[n].Cells[j].Style.BackColor = color;
                         break;
-     
+
                     }
         }
         //將傳入之row塗上color
-        private void paintBack(DataGridView dgv, DataRow row,Color color)
-        { 
-            int m=-1;
+        private void paintBack(DataGridView dgv, DataRow row, Color color)
+        {
+            int m = -1;
             for (int i = 0; i < dgv.Rows.Count; i++)
                 if (dgv.Rows[i].Cells["日期"].Value.Equals(row["日期"]))
-                { 
+                {
                     m = i;
                     break;
                 }
@@ -864,9 +867,9 @@ namespace _0726
         }
         //sort
         private int[] sort(int[] arr)
-        { 
-            for(int i=0;i<arr.Length-1;i++)
-                for(int j=i+1;j<arr.Length;j++)
+        {
+            for (int i = 0; i < arr.Length - 1; i++)
+                for (int j = i + 1; j < arr.Length; j++)
                     if (arr[i] > arr[j])
                     {
                         int temp = arr[i];
@@ -907,11 +910,11 @@ namespace _0726
                 else
                 {
                     for (int j = 1; j <= n; j++)
-                    { 
-                        if( ((arr[i]+j)<table1.Rows.Count) && (!arr.Contains(arr[i]+j)) )
+                    {
+                        if (((arr[i] + j) < table1.Rows.Count) && (!arr.Contains(arr[i] + j)))
                         {
-                            if(!tableContainRow(table1.Rows[arr[i]+j],table2))   
-                                table2.ImportRow(table1.Rows[arr[i]+j]);
+                            if (!tableContainRow(table1.Rows[arr[i] + j], table2))
+                                table2.ImportRow(table1.Rows[arr[i] + j]);
                             table2.AcceptChanges();
                         }
                     }
@@ -952,7 +955,7 @@ namespace _0726
         {
             int[] arr = new int[table2.Rows.Count];
 
-            for(int j = 0; j < table2.Rows.Count; j++)
+            for (int j = 0; j < table2.Rows.Count; j++)
                 for (int i = 0; i < table1.Rows.Count; i++)
                 {
                     if (table1.Rows[i]["日期"].Equals(table2.Rows[j]["日期"]))
@@ -968,10 +971,10 @@ namespace _0726
 
             int[] arr = findIndexTable(oTable, mTable);
             bool[] filter = new bool[oTable.Rows.Count];
-            
-            for(int i=0;i<oTable.Rows.Count;i++)
-                for(int j=0;j<arr.Length;j++)
-                    if( ((arr[j]+n)<oTable.Rows.Count)&&((arr[j]-preN)>=0))
+
+            for (int i = 0; i < oTable.Rows.Count; i++)
+                for (int j = 0; j < arr.Length; j++)
+                    if (((arr[j] + n) < oTable.Rows.Count) && ((arr[j] - preN) >= 0))
                         if ((i >= (arr[j] - preN)) && (i <= (arr[j] + n)))
                         {
                             filter[i] = true;
@@ -989,7 +992,7 @@ namespace _0726
 
         private void objDV_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            if(e.RowIndex!=-1&&e.ColumnIndex!=0)
+            if (e.RowIndex != -1 && e.ColumnIndex != 0)
             {
                 clearColor(objDV);
                 objDV.CurrentCell.Style.BackColor = Color.Yellow;
@@ -1000,7 +1003,7 @@ namespace _0726
         //舊查詢按鈕
         private void query2Button_Click(object sender, EventArgs e)
         {
-            
+
             //	進行連結資料庫
             conn.Open();
             //oledbdataadapter物件建立資料表查詢結果
@@ -1077,7 +1080,7 @@ namespace _0726
 
                 if (status[0])
                 {
-                    
+
                     for (int i = table.Rows.Count - 1; i - rangeNum >= 0; i--)
                     {
                         if ((status[1] || (System.Convert.ToInt32(table.Rows[i - rangeNum][1]) == inputNum[0])) && (status[2] || (System.Convert.ToInt32(table.Rows[i - rangeNum][2]) == inputNum[1])) && (status[3] || (System.Convert.ToInt32(table.Rows[i - rangeNum][3]) == inputNum[2])) && (status[4] || (System.Convert.ToInt32(table.Rows[i - rangeNum][4]) == inputNum[3])) && (status[5] || (System.Convert.ToInt32(table.Rows[i - rangeNum][5]) == inputNum[4])) && (status[6] || (System.Convert.ToInt32(table.Rows[i - rangeNum][6]) == inputNum[5])) && (status[7] || (System.Convert.ToInt32(table.Rows[i - rangeNum][7]) == inputNum[6])))
@@ -1087,7 +1090,7 @@ namespace _0726
                     }
                     for (int i = 0; i < rangeNum; i++)
                         table.Rows[i].Delete();
-                    
+
                     table.AcceptChanges();
 
                     objDV2.DataSource = table;
@@ -1096,7 +1099,7 @@ namespace _0726
                     qrForm.totalTable.Merge(table);
                     qrForm.refresh();
                     qrForm.Show();
-                    
+
 
                     objDV2.ClearSelection();
                     if (table.Rows.Count != 0)
@@ -1104,7 +1107,7 @@ namespace _0726
                         for (int i = 0; i < table.Rows.Count; i++)
                             for (int j = 1; j <= 7; j++)
                                 totalNum[Convert.ToInt32(table.Rows[i][j]) - 1]++;
-                    }                    
+                    }
                 }
                 else
                     MessageBox.Show("請輸入欲查詢數字！");
@@ -1113,7 +1116,7 @@ namespace _0726
                 MessageBox.Show("查無此日期範圍資料...");
         }
 
-        private void showTotalResult(int [] num)
+        private void showTotalResult(int[] num)
         {
             int[] max = new int[10];
             max = findTopNIndex(num, 10);
@@ -1300,13 +1303,13 @@ namespace _0726
 
             DataTable oriTable = new DataTable();
             adapter.Fill(oriTable);
-            
+
             //關閉連線
             conn.Close();
 
             DataTable outTable = new DataTable();
 
-            for (int k = oriTable.Rows.Count-2; k >=0; k--)
+            for (int k = oriTable.Rows.Count - 2; k >= 0; k--)
             {
                 DataRow row = oriTable.Rows[k];
 
@@ -1337,9 +1340,9 @@ namespace _0726
                         for (int j = 1; j <= 7; j++)
                             resultNum[Convert.ToInt32(table.Rows[i][j]) - 1]++;
                 }
-                showTotalResult2(inputNum,resultNum);
+                showTotalResult2(inputNum, resultNum);
             }
-            
+
         }
 
         private void showTotalResult2(int[] input, int[] num)
@@ -1358,7 +1361,7 @@ namespace _0726
                     outStr += "0" + (max[i] + 1).ToString() + " ";
                 else
                     outStr += (max[i] + 1).ToString() + " ";
-            
+
             MessageBox.Show(outStr);
         }
 
@@ -1370,7 +1373,7 @@ namespace _0726
 
             //	進行連結資料庫
             conn.Open();
-            
+
             //	宣告並設定  查詢『num 資料表』字串
             string str = "select * from num where 日期 between " + aQueryDateTextBox1.Text + " and " + aQueryDateTextBox2.Text + " order by 日期";
             adapter = new OleDbDataAdapter(str, conn);
@@ -1412,11 +1415,11 @@ namespace _0726
                 {
                     count++;
                 }
-                
+
             }
 
             //save rest numbers in matching numbers
-            int[] numArray = new int[count*5];
+            int[] numArray = new int[count * 5];
             int n = 0;
             for (int i = 0; i < table.Rows.Count; i++)
             {
@@ -1508,7 +1511,7 @@ namespace _0726
             //關閉連線
             conn.Close();
 
-            int pos1 = 0, pos2 = 0, n=Convert.ToInt32(nextTextBox.Text);
+            int pos1 = 0, pos2 = 0, n = Convert.ToInt32(nextTextBox.Text);
 
             if (radioButton1_1.Checked)
                 pos1 = 1;
@@ -1543,7 +1546,7 @@ namespace _0726
             resultTable = table.Copy();
             resultTable.Clear();
 
-            for (int i = 0; i < table.Rows.Count-2; i++)
+            for (int i = 0; i < table.Rows.Count - 2; i++)
             {
                 if (Convert.ToInt32(table.Rows[i][pos1]) == Convert.ToInt32(table.Rows[i + 1][pos2]))
                 {
@@ -1553,7 +1556,7 @@ namespace _0726
                         resultTable.ImportRow(table.Rows[i + 2 + n]);
                 }
             }
-            
+
             pQueryDataGridView.DataSource = resultTable;
 
             //20100704 refined
@@ -1561,17 +1564,17 @@ namespace _0726
             qrForm.refresh();
             qrForm.Show();
 
-            for(int k=0;k<resultTable.Rows.Count;k=k+3)
+            for (int k = 0; k < resultTable.Rows.Count; k = k + 3)
             {
                 for (int i = 1; i <= 7; i++)
                     for (int j = 1; j <= 7; j++)
-                        if (pQueryDataGridView.Rows[k].Cells[i].Value.Equals(pQueryDataGridView.Rows[k+1].Cells[j].Value))
+                        if (pQueryDataGridView.Rows[k].Cells[i].Value.Equals(pQueryDataGridView.Rows[k + 1].Cells[j].Value))
                         {
                             pQueryDataGridView.Rows[k].Cells[i].Style.BackColor = Color.Pink;
-                            pQueryDataGridView.Rows[k+1].Cells[j].Style.BackColor = Color.Pink;
+                            pQueryDataGridView.Rows[k + 1].Cells[j].Style.BackColor = Color.Pink;
                             break;
                         }
-                paintBack(pQueryDataGridView, resultTable.Rows[k+2], Color.Gray);
+                paintBack(pQueryDataGridView, resultTable.Rows[k + 2], Color.Gray);
             }
         }
 
@@ -1628,7 +1631,7 @@ namespace _0726
             resultTable.Clear();
 
             int j = Convert.ToInt32(monthTextBox.Text);
-            int temp = 0,index=-1,counter=0;
+            int temp = 0, index = -1, counter = 0;
             for (int i = 0; i < table.Rows.Count; i++)
             {
                 if (temp != (Convert.ToInt32(table.Rows[i][0]) / 100))
@@ -1684,11 +1687,11 @@ namespace _0726
             resultTable.Clear();
 
             int temp = Convert.ToInt32(table.Rows[0][0]) / 100;
-            for (int i = 1; i<table.Rows.Count ; i++)
+            for (int i = 1; i < table.Rows.Count; i++)
             {
                 if (temp != (Convert.ToInt32(table.Rows[i][0]) / 100))
                 {
-                    resultTable.ImportRow(table.Rows[i-1]);
+                    resultTable.ImportRow(table.Rows[i - 1]);
                     temp = Convert.ToInt32(table.Rows[i][0]) / 100;
                 }
             }
