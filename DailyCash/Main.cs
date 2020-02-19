@@ -11,6 +11,7 @@ using System.Net;
 using System.IO;
 using System.IO.Compression;
 using HtmlAgilityPack;
+using System.Collections.Specialized;
 
 namespace DailyCash
 {
@@ -253,9 +254,53 @@ namespace DailyCash
             string urlAddress = "https://www.taiwanlottery.com.tw/Lotto/Dailycash/history.aspx";
 
 #if !_DEBUG
+            List<HtmlNode> section = new List<HtmlNode>();
+
+            NameValueCollection postData = new NameValueCollection();
+
+            postData.Add("D539Control_history1$DropDownList1", "5");
+            postData.Add("D539Control_history1$chk", "radYM");
+            postData.Add("D539Control_history1$dropYear", "109");
+            postData.Add("D539Control_history1$dropMonth", "1");
+            //postData.Add("D539Control_history1$btnSubmit", "查詢");
+
             HtmlWeb web = new HtmlWeb();
-            var doc = web.Load(urlAddress);
-            Console.WriteLine(doc.Text);
+
+            web.PreRequest += (request) =>
+            {
+                string payLoad = AssemblePostPayload(postData);
+                byte[] buff = Encoding.ASCII.GetBytes(payLoad.ToCharArray());
+                request.ContentLength = buff.Length;
+                request.ContentType = "application/x-www-form-urlencoded";
+                Stream reqStream = request.GetRequestStream();
+                reqStream.Write(buff, 0, buff.Length);
+                return true;
+            };
+
+            var doc = web.Load(urlAddress, "POST");
+            var children = doc.DocumentNode.SelectNodes("//span[contains(@id,'D539Control_history1_dlQuery_D539_DDate')] | //span[contains(@id,'D539Control_history1_dlQuery_SNo')]");
+
+            for (int i = 0; i < children.Count; i += 6)
+            {
+                string strDate = System.Text.RegularExpressions.Regex.Replace(children[i].InnerText, "/", "");
+                string sql = string.Format("INSERT INTO dailycash (日期, 一, 二, 三, 四, 五) VALUES ({0},{1}", strDate, children[i + 1].InnerText);
+                for (int j = 2; j <= 5; j++)
+                    sql += "," + children[i + j].InnerText;
+                sql += ")";
+                Console.WriteLine(sql);
+
+                var obj = new OleDbCommand(string.Format("SELECT * FROM dailycash WHERE 日期={0}", strDate), conn).ExecuteScalar();
+                if (obj == null)
+                {
+                    OleDbCommand cmd = new OleDbCommand(sql, conn);
+                    //執行資料庫指令OleDbCommand
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            refreshData();
+            currentRow = 0;
+            gotoRow(currentRow);
+            updateDate();
 #else
             var request = (HttpWebRequest)WebRequest.Create(urlAddress);
             var str = "";
@@ -313,6 +358,16 @@ namespace DailyCash
                 }
             }
 #endif
+        }
+
+        private string AssemblePostPayload(NameValueCollection fv)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (String key in fv.AllKeys)
+            {
+                sb.Append("&" + Uri.EscapeDataString(key) + "=" + Uri.EscapeDataString(fv.Get(key)));
+            }
+            return sb.ToString().Substring(1);
         }
 
         private void btnDBCreate_Click(object sender, EventArgs e)
