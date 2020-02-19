@@ -46,6 +46,7 @@ namespace DailyCash
             messageLabel.Text = "";
 
 #if (NET45 || NET48)
+            btnCrawl.Visible = true;
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12 | SecurityProtocolType.Tls13 | SecurityProtocolType.Ssl3;
 #else
             //may not work for https website
@@ -262,11 +263,11 @@ namespace DailyCash
             postData.Add("D539Control_history1$chk", "radYM");
             postData.Add("D539Control_history1$dropYear", "109");
             postData.Add("D539Control_history1$dropMonth", "1");
-            //postData.Add("D539Control_history1$btnSubmit", "查詢");
+            postData.Add("D539Control_history1$btnSubmit", "查詢");
 
             HtmlWeb web = new HtmlWeb();
 
-            web.PreRequest += (request) =>
+            HtmlWeb.PreRequestHandler handler = delegate (HttpWebRequest request)
             {
                 string payLoad = AssemblePostPayload(postData);
                 byte[] buff = Encoding.ASCII.GetBytes(payLoad.ToCharArray());
@@ -277,6 +278,7 @@ namespace DailyCash
                 return true;
             };
 
+            web.PreRequest += handler;
             var doc = web.Load(urlAddress, "POST");
             var children = doc.DocumentNode.SelectNodes("//span[contains(@id,'D539Control_history1_dlQuery_D539_DDate')] | //span[contains(@id,'D539Control_history1_dlQuery_SNo')]");
 
