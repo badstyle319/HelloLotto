@@ -1,4 +1,6 @@
 # MyLotto
 lotto program for fun
 
-crawl function works only if the .net framework were greater than 4.5
+1. Crawl function works only if the .net framework were greater than 4.5.
+
+2. Validation relative feature were not processed yet, just replace them from website.
