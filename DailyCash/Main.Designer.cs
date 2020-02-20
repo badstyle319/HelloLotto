@@ -314,7 +314,6 @@
             this.btnCrawl.Text = "爬蟲";
             this.btnCrawl.UseVisualStyleBackColor = true;
             this.btnCrawl.Visible = false;
-            this.btnCrawl.Click += new System.EventHandler(this.BtnCrawl_Click);
             // 
             // btnDBOK
             // 
