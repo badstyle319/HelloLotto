@@ -166,6 +166,7 @@ namespace DailyCash
         private void updateDate()
         {
             qDateTextBox2.Text = newestDate;
+            q2DateTextBox2.Text = newestDate;
         }
 
         //清除cellcolor
@@ -738,6 +739,169 @@ namespace DailyCash
             clearColor(objDV1);
             objDV1.CurrentCell.Style.BackColor = Color.Yellow;
             changeColor(objDV1, Convert.ToInt32(objDV1.CurrentCell.Value), Color.Yellow);
+        }
+
+        private void query2Button_Click(object sender, EventArgs e)
+        {
+            //oledbdataadapter物件建立資料表查詢結果
+            //	宣告並設定  查詢『num 資料表』字串
+            string str = "SELECT * FROM dailycash WHERE 日期 BETWEEN " + q2DateTextBox1.Text + " AND " + q2DateTextBox2.Text + " ORDER BY 日期";
+
+            //	宣告並設定  資料表查詢物件『adapter』
+            adapter = new OleDbDataAdapter(str, conn);
+
+            DataTable table = new DataTable();
+            adapter.Fill(table);
+
+            if (table.Rows.Count != 0)
+            {
+                //宣告並判斷後幾期變數,預設為0
+                int rangeNum = 0;
+                if (rangeTextBox2.Text == "")
+                {
+                    rangeTextBox2.Text = rangeNum.ToString();
+                }
+                else
+                    rangeNum = Int32.Parse(rangeTextBox2.Text);
+
+                bool[] status = new bool[6];
+                int[] inputNum = new int[5];
+
+                //判斷是否輸入錯誤(未輸入所有查詢值)
+                if ((textBox2_1.Text == "") && (textBox2_2.Text == "") && (textBox2_3.Text == "") && (textBox2_4.Text == "") && (textBox2_5.Text == ""))
+                    status[0] = false;
+                else
+                    status[0] = true;
+
+                //判斷輸入值
+                //position 1
+                if (textBox2_1.Text == "")
+                    status[1] = true;
+                else
+                    inputNum[0] = Int32.Parse(textBox2_1.Text);
+                //position 2
+                if (textBox2_2.Text == "")
+                    status[2] = true;
+                else
+                    inputNum[1] = Int32.Parse(textBox2_2.Text);
+                //position 3
+                if (textBox2_3.Text == "")
+                    status[3] = true;
+                else
+                    inputNum[2] = Int32.Parse(textBox2_3.Text);
+                //position 4
+                if (textBox2_4.Text == "")
+                    status[4] = true;
+                else
+                    inputNum[3] = Int32.Parse(textBox2_4.Text);
+                //position 5
+                if (textBox2_5.Text == "")
+                    status[5] = true;
+                else
+                    inputNum[4] = Int32.Parse(textBox2_5.Text);
+
+                if (status[0])
+                {
+                    for (int i = table.Rows.Count - 1; i - rangeNum >= 0; i--)
+                    {
+                        if ((status[1] || (System.Convert.ToInt32(table.Rows[i - rangeNum][1]) == inputNum[0])) && (status[2] || (System.Convert.ToInt32(table.Rows[i - rangeNum][2]) == inputNum[1])) && (status[3] || (System.Convert.ToInt32(table.Rows[i - rangeNum][3]) == inputNum[2])) && (status[4] || (System.Convert.ToInt32(table.Rows[i - rangeNum][4]) == inputNum[3])) && (status[5] || (System.Convert.ToInt32(table.Rows[i - rangeNum][5]) == inputNum[4])))
+                            continue;
+                        else
+                            table.Rows[i].Delete();
+                    }
+                    for (int i = 0; i < rangeNum; i++)
+                        table.Rows[i].Delete();
+
+                    table.AcceptChanges();
+
+                    objDV2.DataSource = table;
+
+                    qrForm.totalTable.Merge(table);
+                    qrForm.refresh();
+                    qrForm.Show();
+
+                    objDV2.ClearSelection();
+                    if (table.Rows.Count != 0)
+                    {
+                        for (int i = 0; i < table.Rows.Count; i++)
+                            for (int j = 1; j <= 5; j++)
+                                totalNum[Convert.ToInt32(table.Rows[i][j]) - 1]++;
+                    }
+                }
+                else
+                    MessageBox.Show("請輸入欲查詢數字！");
+            }
+            else
+                MessageBox.Show("查無此日期範圍資料...");
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            showTotalResult(totalNum);
+        }
+
+        private void showTotalResult(int[] num)
+        {
+            int[] max = new int[10];
+            max = findTopNIndex(num, 10);
+            string outStr = "號碼\t次數";
+            for (int i = 0; i < 10; i++)
+            {
+                if ((max[i] + 1) < 10)
+                {
+                    if (num[max[i]] < 10)
+                        outStr += '\n' + "   0" + (max[i] + 1).ToString() + "\t" + "   0" + num[max[i]].ToString();
+                    else
+                        outStr += '\n' + "   0" + (max[i] + 1).ToString() + '\t' + "   " + num[max[i]].ToString();
+                }
+                else
+                {
+                    if (num[max[i]] < 10)
+                        outStr += '\n' + "   " + (max[i] + 1).ToString() + '\t' + "   0" + num[max[i]].ToString();
+                    else
+                        outStr += '\n' + "   " + (max[i] + 1).ToString() + '\t' + "   " + num[max[i]].ToString();
+                }
+            }
+            MessageBox.Show(outStr);
+        }
+
+        private int[] findTopNIndex(int[] num, int n)
+        {
+            int[] max = new int[n];
+            int[] arr = new int[num.Length];
+            num.CopyTo(arr, 0);
+
+            for (int j = 0; j < n; j++)
+            {
+                for (int i = 0; i < num.Length; i++)
+                {
+                    int temp = arr.Max();
+
+                    if (arr[i] == temp)
+                    {
+                        max[j] = i;
+                        arr[i] = 0;
+                        break;
+                    }
+                }
+            }
+            return max;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            Array.Clear(totalNum, 0, totalNum.Length);
+            showTotalResult(totalNum);
+        }
+
+        private void objDV2_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex != -1 && e.ColumnIndex != 0)
+            {
+                clearColor(objDV2);
+                objDV2.CurrentCell.Style.BackColor = Color.Yellow;
+                changeColor(objDV2, Convert.ToInt32(objDV2.CurrentCell.Value), Color.Yellow);
+            }
         }
     }
 }

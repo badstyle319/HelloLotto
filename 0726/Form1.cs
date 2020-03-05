@@ -1003,7 +1003,6 @@ namespace _0726
         //舊查詢按鈕
         private void query2Button_Click(object sender, EventArgs e)
         {
-
             //	進行連結資料庫
             conn.Open();
             //oledbdataadapter物件建立資料表查詢結果

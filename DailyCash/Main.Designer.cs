@@ -36,6 +36,10 @@
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -74,12 +78,34 @@
             this.label1 = new System.Windows.Forms.Label();
             this.objDV = new System.Windows.Forms.DataGridView();
             this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.groupBox7 = new System.Windows.Forms.GroupBox();
+            this.button7 = new System.Windows.Forms.Button();
+            this.button6 = new System.Windows.Forms.Button();
+            this.q2DateTextBox2 = new System.Windows.Forms.TextBox();
+            this.label28 = new System.Windows.Forms.Label();
+            this.q2DateTextBox1 = new System.Windows.Forms.TextBox();
+            this.label29 = new System.Windows.Forms.Label();
+            this.query2Button = new System.Windows.Forms.Button();
+            this.label30 = new System.Windows.Forms.Label();
+            this.label31 = new System.Windows.Forms.Label();
+            this.textBox2_1 = new System.Windows.Forms.TextBox();
+            this.textBox2_5 = new System.Windows.Forms.TextBox();
+            this.label32 = new System.Windows.Forms.Label();
+            this.textBox2_2 = new System.Windows.Forms.TextBox();
+            this.textBox2_4 = new System.Windows.Forms.TextBox();
+            this.rangeTextBox2 = new System.Windows.Forms.TextBox();
+            this.textBox2_3 = new System.Windows.Forms.TextBox();
+            this.objDV2 = new System.Windows.Forms.DataGridView();
             this.tabPage2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.objDV1)).BeginInit();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.objDV)).BeginInit();
             this.tabControl1.SuspendLayout();
+            this.tabPage3.SuspendLayout();
+            this.groupBox7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.objDV2)).BeginInit();
             this.SuspendLayout();
             // 
             // tabPage2
@@ -527,12 +553,228 @@
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tabPage3);
             this.tabControl1.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
             this.tabControl1.Location = new System.Drawing.Point(11, 12);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(449, 462);
             this.tabControl1.TabIndex = 1;
+            // 
+            // tabPage3
+            // 
+            this.tabPage3.Controls.Add(this.groupBox7);
+            this.tabPage3.Controls.Add(this.objDV2);
+            this.tabPage3.Location = new System.Drawing.Point(4, 26);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage3.Size = new System.Drawing.Size(441, 432);
+            this.tabPage3.TabIndex = 2;
+            this.tabPage3.Text = "舊查詢";
+            this.tabPage3.UseVisualStyleBackColor = true;
+            // 
+            // groupBox7
+            // 
+            this.groupBox7.Controls.Add(this.button7);
+            this.groupBox7.Controls.Add(this.button6);
+            this.groupBox7.Controls.Add(this.q2DateTextBox2);
+            this.groupBox7.Controls.Add(this.label28);
+            this.groupBox7.Controls.Add(this.q2DateTextBox1);
+            this.groupBox7.Controls.Add(this.label29);
+            this.groupBox7.Controls.Add(this.query2Button);
+            this.groupBox7.Controls.Add(this.label30);
+            this.groupBox7.Controls.Add(this.label31);
+            this.groupBox7.Controls.Add(this.textBox2_1);
+            this.groupBox7.Controls.Add(this.textBox2_5);
+            this.groupBox7.Controls.Add(this.label32);
+            this.groupBox7.Controls.Add(this.textBox2_2);
+            this.groupBox7.Controls.Add(this.textBox2_4);
+            this.groupBox7.Controls.Add(this.rangeTextBox2);
+            this.groupBox7.Controls.Add(this.textBox2_3);
+            this.groupBox7.Location = new System.Drawing.Point(1, 4);
+            this.groupBox7.Name = "groupBox7";
+            this.groupBox7.Size = new System.Drawing.Size(438, 125);
+            this.groupBox7.TabIndex = 26;
+            this.groupBox7.TabStop = false;
+            this.groupBox7.Text = "指定位置查詢";
+            // 
+            // button7
+            // 
+            this.button7.Location = new System.Drawing.Point(334, 58);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(75, 23);
+            this.button7.TabIndex = 26;
+            this.button7.Text = "結果";
+            this.button7.UseVisualStyleBackColor = true;
+            this.button7.Click += new System.EventHandler(this.button7_Click);
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(342, 84);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(84, 27);
+            this.button6.TabIndex = 25;
+            this.button6.Text = "清空統計";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
+            // q2DateTextBox2
+            // 
+            this.q2DateTextBox2.Location = new System.Drawing.Point(132, 26);
+            this.q2DateTextBox2.Name = "q2DateTextBox2";
+            this.q2DateTextBox2.Size = new System.Drawing.Size(75, 27);
+            this.q2DateTextBox2.TabIndex = 1;
+            this.q2DateTextBox2.Text = "971231";
+            this.q2DateTextBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label28
+            // 
+            this.label28.AutoSize = true;
+            this.label28.Location = new System.Drawing.Point(105, 29);
+            this.label28.Name = "label28";
+            this.label28.Size = new System.Drawing.Size(24, 16);
+            this.label28.TabIndex = 23;
+            this.label28.Text = "到";
+            // 
+            // q2DateTextBox1
+            // 
+            this.q2DateTextBox1.Location = new System.Drawing.Point(39, 26);
+            this.q2DateTextBox1.Name = "q2DateTextBox1";
+            this.q2DateTextBox1.Size = new System.Drawing.Size(60, 27);
+            this.q2DateTextBox1.TabIndex = 0;
+            this.q2DateTextBox1.Text = "960701";
+            this.q2DateTextBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // label29
+            // 
+            this.label29.AutoSize = true;
+            this.label29.Location = new System.Drawing.Point(9, 29);
+            this.label29.Name = "label29";
+            this.label29.Size = new System.Drawing.Size(24, 16);
+            this.label29.TabIndex = 21;
+            this.label29.Text = "從";
+            // 
+            // query2Button
+            // 
+            this.query2Button.Location = new System.Drawing.Point(329, 24);
+            this.query2Button.Name = "query2Button";
+            this.query2Button.Size = new System.Drawing.Size(83, 27);
+            this.query2Button.TabIndex = 20;
+            this.query2Button.Text = "開始查詢";
+            this.query2Button.UseVisualStyleBackColor = true;
+            this.query2Button.Click += new System.EventHandler(this.query2Button_Click);
+            // 
+            // label30
+            // 
+            this.label30.AutoSize = true;
+            this.label30.Location = new System.Drawing.Point(31, 62);
+            this.label30.Name = "label30";
+            this.label30.Size = new System.Drawing.Size(204, 16);
+            this.label30.TabIndex = 1;
+            this.label30.Text = "一　   二   　 三   　四   　五";
+            // 
+            // label31
+            // 
+            this.label31.AutoSize = true;
+            this.label31.Location = new System.Drawing.Point(207, 29);
+            this.label31.Name = "label31";
+            this.label31.Size = new System.Drawing.Size(40, 16);
+            this.label31.TabIndex = 18;
+            this.label31.Text = "後第";
+            // 
+            // textBox2_1
+            // 
+            this.textBox2_1.Location = new System.Drawing.Point(20, 84);
+            this.textBox2_1.Name = "textBox2_1";
+            this.textBox2_1.Size = new System.Drawing.Size(40, 27);
+            this.textBox2_1.TabIndex = 2;
+            // 
+            // textBox2_5
+            // 
+            this.textBox2_5.Location = new System.Drawing.Point(204, 84);
+            this.textBox2_5.Name = "textBox2_5";
+            this.textBox2_5.Size = new System.Drawing.Size(40, 27);
+            this.textBox2_5.TabIndex = 6;
+            // 
+            // label32
+            // 
+            this.label32.AutoSize = true;
+            this.label32.Location = new System.Drawing.Point(299, 29);
+            this.label32.Name = "label32";
+            this.label32.Size = new System.Drawing.Size(24, 16);
+            this.label32.TabIndex = 17;
+            this.label32.Text = "期";
+            // 
+            // textBox2_2
+            // 
+            this.textBox2_2.Location = new System.Drawing.Point(66, 84);
+            this.textBox2_2.Name = "textBox2_2";
+            this.textBox2_2.Size = new System.Drawing.Size(40, 27);
+            this.textBox2_2.TabIndex = 3;
+            // 
+            // textBox2_4
+            // 
+            this.textBox2_4.Location = new System.Drawing.Point(158, 84);
+            this.textBox2_4.Name = "textBox2_4";
+            this.textBox2_4.Size = new System.Drawing.Size(40, 27);
+            this.textBox2_4.TabIndex = 5;
+            // 
+            // rangeTextBox2
+            // 
+            this.rangeTextBox2.Location = new System.Drawing.Point(253, 24);
+            this.rangeTextBox2.Name = "rangeTextBox2";
+            this.rangeTextBox2.Size = new System.Drawing.Size(40, 27);
+            this.rangeTextBox2.TabIndex = 9;
+            // 
+            // textBox2_3
+            // 
+            this.textBox2_3.Location = new System.Drawing.Point(112, 84);
+            this.textBox2_3.Name = "textBox2_3";
+            this.textBox2_3.Size = new System.Drawing.Size(40, 27);
+            this.textBox2_3.TabIndex = 4;
+            // 
+            // objDV2
+            // 
+            this.objDV2.AllowUserToAddRows = false;
+            this.objDV2.AllowUserToDeleteRows = false;
+            this.objDV2.AllowUserToResizeColumns = false;
+            this.objDV2.AllowUserToResizeRows = false;
+            this.objDV2.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            dataGridViewCellStyle9.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle9.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            dataGridViewCellStyle9.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle9.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle9.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle9.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.objDV2.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle9;
+            this.objDV2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridViewCellStyle10.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle10.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            dataGridViewCellStyle10.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle10.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle10.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle10.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.objDV2.DefaultCellStyle = dataGridViewCellStyle10;
+            this.objDV2.Location = new System.Drawing.Point(4, 135);
+            this.objDV2.Name = "objDV2";
+            this.objDV2.ReadOnly = true;
+            dataGridViewCellStyle11.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle11.Font = new System.Drawing.Font("新細明體", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(136)));
+            dataGridViewCellStyle11.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle11.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle11.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle11.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.objDV2.RowHeadersDefaultCellStyle = dataGridViewCellStyle11;
+            this.objDV2.RowHeadersVisible = false;
+            dataGridViewCellStyle12.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            this.objDV2.RowsDefaultCellStyle = dataGridViewCellStyle12;
+            this.objDV2.RowTemplate.Height = 24;
+            this.objDV2.Size = new System.Drawing.Size(428, 293);
+            this.objDV2.TabIndex = 25;
+            this.objDV2.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.objDV2_CellDoubleClick);
             // 
             // Main
             // 
@@ -553,6 +795,10 @@
             this.tabPage1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.objDV)).EndInit();
             this.tabControl1.ResumeLayout(false);
+            this.tabPage3.ResumeLayout(false);
+            this.groupBox7.ResumeLayout(false);
+            this.groupBox7.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.objDV2)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -597,6 +843,25 @@
         private System.Windows.Forms.DataGridView objDV;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Button btnCrawl;
+        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.GroupBox groupBox7;
+        private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button6;
+        private System.Windows.Forms.TextBox q2DateTextBox2;
+        private System.Windows.Forms.Label label28;
+        private System.Windows.Forms.TextBox q2DateTextBox1;
+        private System.Windows.Forms.Label label29;
+        private System.Windows.Forms.Button query2Button;
+        private System.Windows.Forms.Label label30;
+        private System.Windows.Forms.Label label31;
+        private System.Windows.Forms.TextBox textBox2_1;
+        private System.Windows.Forms.TextBox textBox2_5;
+        private System.Windows.Forms.Label label32;
+        private System.Windows.Forms.TextBox textBox2_2;
+        private System.Windows.Forms.TextBox textBox2_4;
+        private System.Windows.Forms.TextBox rangeTextBox2;
+        private System.Windows.Forms.TextBox textBox2_3;
+        private System.Windows.Forms.DataGridView objDV2;
     }
 }
 
