@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -8,11 +6,11 @@ using System.Text;
 using System.Windows.Forms;
 using System.Data.OleDb;
 using System.Net;
-using System.IO;
-using System.IO.Compression;
+
 #if (NET45 || NET48)
 using HtmlAgilityPack;
 #endif
+
 using System.Collections.Specialized;
 
 namespace DailyCash
